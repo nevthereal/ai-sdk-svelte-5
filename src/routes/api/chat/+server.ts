@@ -29,7 +29,8 @@ export async function POST({ request }) {
 					};
 				}
 			})
-		}
+		},
+		maxSteps: 5
 	});
 
 	return result.toDataStreamResponse();
