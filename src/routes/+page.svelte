@@ -1,8 +1,10 @@
-<script>
+<script lang="ts">
 	import { Chat } from '@ai-sdk/svelte';
 	import { marked } from 'marked';
 
 	const chat = new Chat();
+
+	let attachments = $state<FileList | undefined>();
 </script>
 
 <main class="flex h-screen flex-col rounded-2xl p-4">
@@ -18,13 +20,23 @@
 				<span class="prose">{@html marked(message.content)}</span>
 			</li>
 		{/each}
+		{#if chat.status === 'submitted'}
+			<p class="font-mono italic">loading</p>
+		{/if}
 	</ul>
-	<form onsubmit={chat.handleSubmit} class="flex gap-4">
+	<form
+		onsubmit={(e) => {
+			chat.handleSubmit(e, { experimental_attachments: attachments });
+			attachments = undefined;
+		}}
+		class="flex gap-4"
+	>
 		<input
 			placeholder="What are you curious about?"
 			class="flex-grow rounded-lg p-2 ring-2 ring-gray-400"
 			bind:value={chat.input}
 		/>
+		<input type="file" multiple bind:files={attachments} />
 		{#if chat.status === 'streaming'}
 			<button class="rounded-lg bg-rose-300 px-4 py-2 font-mono font-bold" onclick={chat.stop}
 				>Stop</button

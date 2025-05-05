@@ -1,5 +1,5 @@
 import { createOpenAI } from '@ai-sdk/openai';
-import { streamText, tool } from 'ai';
+import { streamText, tool, type Message } from 'ai';
 import { z } from 'zod';
 
 import { OPENAI_API_KEY } from '$env/static/private';
@@ -9,7 +9,7 @@ const openai = createOpenAI({
 });
 
 export async function POST({ request }) {
-	const { messages } = await request.json();
+	const { messages }: { messages: Message[] } = await request.json();
 
 	const result = streamText({
 		model: openai('gpt-4o-mini'),
